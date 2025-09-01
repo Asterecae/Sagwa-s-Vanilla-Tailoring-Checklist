@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sagwa's Vanilla Tailoring Checklist</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef7 0%, #fff0f8 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ff69b4, #ff91a4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .instructions {
+            background: #fef7ff;
+            padding: 20px 30px;
+            border-left: 5px solid #ff69b4;
+            margin: 20px 30px;
+            border-radius: 10px;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 20px 30px;
+            background: #fff8fc;
+            margin: 0 30px 20px 30px;
+            border-radius: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .trainer { background: #ffd1dc; color: #8b0000; }
+        .drop { background: #ffb6c1; color: #800080; }
+        .vendor { background: #dda0dd; color: #4b0082; }
+        .quest { background: #f0e68c; color: #b8860b; }
+        .unknown { background: #d3d3d3; color: #696969; }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 0 30px 30px 30px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #ff69b4, #ff91a4);
+            color: white;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ffe0e6;
+            vertical-align: middle;
+        }
+        
+        tr:hover {
+            background: #fef7ff;
+            transform: scale(1.005);
+            transition: all 0.2s ease;
+        }
+        
+        .pattern-name {
+            font-weight: 600;
+            color: #8b0000;
+        }
+        
+        .level {
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .method {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .collected {
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff69b4;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .custom-checkbox:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+        }
+        
+        .custom-checkbox.checked {
+            background: linear-gradient(135deg, #ff69b4, #ff91a4);
+            border-color: #ff1493;
+        }
+        
+        .custom-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            background: #ffe0e6;
+            border-radius: 20px;
+            height: 25px;
+            margin: 20px 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(135deg, #ff69b4, #ff91a4);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            color: #8b0000;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+        
+        .copy-btn {
+            background: linear-gradient(135deg, #ff69b4, #ff91a4);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.6);
+        }
+        
+        .copy-section {
+            text-align: center;
+            padding: 20px;
+            background: #fff8fc;
+            margin: 0 30px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ Sagwa's Vanilla Tailoring Checklist ✨</h1>
+            <p>Track your pattern collection progress!</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>💖 How to Use:</h3>
+            <ol>
+                <li>Click the pink checkboxes next to patterns you've collected</li>
+                <li>Watch your progress bar fill up as you collect more patterns!</li>
+                <li>Your progress automatically saves in your browser (even if you close the tab!)</li>
+            </ol>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item trainer">🎓 Trainer</div>
+            <div class="legend-item drop">💎 Drop/Fish/Pickpocket</div>
+            <div class="legend-item vendor">🛒 Vendor</div>
+            <div class="legend-item quest">⚔️ Quest</div>
+            <div class="legend-item unknown">❓ Unknown</div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+            <div class="progress-text" id="progressText">0 / 171 patterns collected (0%)</div>
+        </div>
+        
+        <div class="table-container">
+            <table id="tailoringTable">
+                <thead>
+                    <tr>
+                        <th>Pattern Name</th>
+                        <th>Item Level</th>
+                        <th>Tailoring Level</th>
+                        <th>Obtainable Method</th>
+                        <th>Collected</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="copy-section">
+            <button class="copy-btn" onclick="resetProgress()">🔄 Reset All Progress</button>
+            <p>✨ Your progress saves automatically! Come back anytime and your checkmarks will still be here! ✨</p>
+        </div>
+    </div>
+
+    <script>
+        const tailoringData = `Pattern Name	Item Level	Tailoring Level	Obtainable Method	Collected
+Bolt of Linen Cloth	1	1	Trainer	false
+Linen Belt	5	1	Trainer	false
+Linen Cloak	7	1	Trainer	false
+Brown Linen Pants	10	30	Trainer	false
+Linen Boots	9	30	Trainer	false
+Brown Linen Shirt	12	40	Trainer	false
+Red Linen Robe	10	40	Drop/Fish/Pickpocket	false
+Linen Bag	11	45	Trainer	false
+Blue Linen Vest	12	55	Vendor	false
+Brown Linen Vest	14	55	Trainer	false
+Red Linen Vest	12	55	Drop/Fish/Pickpocket	false
+Reinforced Linen Cape	13	60	Trainer	false
+Linen Robe	15	65	Trainer	false
+Barbaric Linen Vest	14	70	Drop/Fish/Pickpocket	false
+Blue Linen Robe	14	70	Vendor	false
+Heavy Linen Gloves	15	70	Trainer	false
+Red Linen Bag	14	70	Drop/Vendor	false
+Simple Dress	20	75	Trainer	false
+Simple Kilt	17	75	Trainer	false
+Woolen Cape	17	75	Trainer	false
+Bolt of Woolen Cloth	1	75	Trainer	false
+Simple Linen Pants	21	85	Trainer	false
+Green Woolen Robe	18	90	Unknown	false
+Green Woolen Bag	19	95	Drop/Pickpocket	false
+Red Woolen Boots	19	95	Drop/Fish/Pickpocket	false
+Woolen Bag	19	95	Trainer	false
+Woolen Boots	18	95	Trainer	false
+Woolen Pants	20	95	Trainer	false
+Blue Overalls	20	100	Vendor	false
+Double-stitched Woolen Shoulders	20	100	Trainer	false
+Gray Woolen Shirt	18	100	Trainer	false
+Heavy Woolen Cloak	20	100	Drop/Fish/Pickpocket	false
+Woolen Cape	21	100	Trainer	false
+Woolen Cloak	22	100	Trainer	false
+Gray Woolen Robe	21	105	Drop/Fish	false
+Simple Robe	23	105	Trainer	false
+Woolen Robe	23	105	Trainer	false
+Woolen Gloves	23	110	Trainer	false
+Greater Adept's Robe	23	115	Vendor	false
+Red Woolen Bag	23	115	Drop/Vendor	false
+Woolen Mittens	22	115	Trainer	false
+Woolen Shirt	24	115	Trainer	false
+Colorful Kilt	24	120	Drop	false
+Reinforced Woolen Shoulders	24	120	Drop	false
+Simple Linen Boots	24	120	Trainer	false
+Stylish Blue Shirt	24	120	Drop	false
+Stylish Green Shirt	24	120	Drop/Fish	false
+Woolen Vest	25	120	Trainer	false
+Phoenix Gloves	25	125	Drop	false
+Phoenix Pants	25	125	Drop/Fish	false
+Woolen Belt	26	125	Trainer	false
+Woolen Bag (Heavy)	27	130	Trainer	false
+Bright Yellow Shirt	27	135	Vendor - Alliance Only (Danielle Zipstitch)	false
+Woolen Pants (Heavy)	28	135	Trainer	false
+Boots of Darkness	28	140	Unknown	false
+Spider Silk Slippers	28	140	Drop/Fish	false
+Woolen Cloak (Heavy)	28	140	Trainer	false
+Bolt of Silk Cloth	1	145	Trainer	false
+Azure Silk Gloves	29	145	Vendor	false
+Hands of Darkness	29	145	Drop/Fish	false
+Robes of Arcana	30	150	Drop	false
+Truefaith Gloves	30	150	Drop	false
+Dark Silk Shirt	31	155	Vendor	false
+Azure Silk Hood	32	160	Vendor	false
+Enchanter's Cowl	33	165	Vendor	false
+Green Silk Armor	33	165	Drop	false
+Shadow Hood	34	170	Drop	false
+Formal White Shirt	34	170	Trainer	false
+Azure Silk Cloak	35	175	Vendor	false
+Boots of the Enchanter	35	175	Drop/Fish	false
+Green Silk Pack	35	175	Drop	false
+Crimson Silk Cloak	36	180	Vendor	false
+Spider Belt	36	180	Drop	false
+Crimson Silk Vest	37	185	Trainer	false
+Black Silk Pack	37	185	Drop	false
+Rich Purple Silk Shirt	37	185	Drop/Pickpocket	false
+Bolt of Mageweave	1	185	Trainer	false
+Azure Shoulders	38	190	Drop/Fish	false
+Crimson Silk Shoulders	38	190	Drop	false
+Green Holiday Shirt	38	190	Drop	false
+Earthen Silk Belt	39	195	Drop	false
+Crimson Silk Pantaloons	39	195	Trainer	false
+Black Swashbuckler's Shirt	40	200	Vendor - Neutral (Narkk, Booty Bay)	false
+Icy Cloak	40	200	Vendor	false
+Star Belt	40	200	Drop	false
+Tuxedo Shirt	1	200	Trainer	false
+Tuxedo Pants	35	200	Trainer	false
+Crimson Silk Robe	41	205	Vendor - Neutral (Vizzklick, Tanaris)	false
+Black Mageweave Leggings	42	210	Trainer	false
+Red Mageweave Pants	43	215	Drop	false
+Red Mageweave Vest	43	215	Drop/Fish	false
+White Bandit Mask	43	215	Drop	false
+Orange Mageweave Shirt	43	215	Trainer	false
+Orange Martial Shirt	44	220	Vendor	false
+Stormcloth Gloves	44	220	Unknown	false
+Black Mageweave Vest	43	215	Trainer	false
+Lavender Mageweave Shirt	46	225	Vendor	false
+Pink Mageweave Shirt	47	235	Vendor	false
+Black Mageweave Gloves	46	230	Trainer	false
+Black Mageweave Boots	45	225	Trainer	false
+Black Mageweave Headband	48	240	Trainer	false
+Black Mageweave Shoulders	48	245	Trainer	false
+Mooncloth	1	250	Trainer	false
+White Wedding Dress	35	250	Trainer	false
+Tuxedo Jacket	37	250	Trainer	false
+Shadoweave Pants	43	215	Trainer	false
+Shadoweave Robe	45	225	Trainer	false
+Shadoweave Gloves	45	225	Trainer	false
+Shadoweave Boots	45	230	Trainer	false
+Shadoweave Shoulders	47	235	Trainer	false
+Shadoweave Mask	49	245	Quest	false
+Red Mageweave Gloves	45	225	Drop	false
+Red Mageweave Headband	48	240	Drop	false
+Red Mageweave Shoulders	47	235	Drop	false
+Bolt of Runecloth	1	255	Trainer	false
+Soul Pouch	28	260	Vendor	false
+Runecloth Belt	56	260	Trainer	false
+Runecloth Cloak	57	265	Trainer	false
+Ghostweave Belt	53	265	Drop	false
+Runecloth Robe	58	270	Trainer	false
+Runecloth Tunic	58	270	Trainer	false
+Ghostweave Gloves	54	270	Drop	false
+Cindercloth Vest	52	270	Drop	false
+Brightcloth Robe	58	270	Drop	false
+Cindercloth Robe	55	275	Drop	false
+Cindercloth Cloak	55	275	Drop	false
+Ghostweave Vest	55	275	Drop	false
+Felcloth Pants	55	275	Drop	false
+Runecloth Bag	52	275	Vendor - Qia in Winterspring	false
+Brightcloth Gloves	58	275	Drop	false
+Wizardweave Leggings	55	275	Drop	false
+Runecloth Headband	59	285	Trainer	false
+Cindercloth Gloves	57	285	Drop	false
+Felcloth Boots	57	285	Drop	false
+Robe of Winter Night	57	285	Drop	false
+Cindercloth Boots	59	285	Drop	false
+Felcloth Hood	58	290	Drop	false
+Mooncloth Boots	56	290	Vendor	false
+Mooncloth Leggings	58	290	Drop	false
+Wizardweave Robe	55	290	Drop	false
+Runecloth Pants	60	290	Trainer	false
+Mooncloth Vest	60	300	Drop	false
+Mooncloth Shoulders	61	300	Drop	false
+Mooncloth Robe	61	300	Vendor	false
+Mooncloth Circlet	62	300	Drop	false
+Mooncloth Bag	60	300	Quest	false
+Wizardweave Turban	55	290	Drop	false
+Robe of the Archmage	61	300	Drop	false
+Truefaith Vestments	62	300	Drop	false
+Robe of the Void	62	300	Drop	false
+Runecloth Gloves	60	300	Vendor - Qia in Winterspring	false
+Runecloth Shirt	58	300	Drop	false
+Felcloth Shoulders	58	300	Drop	false
+Felcloth Robe	61	300	Drop	false
+Flarecore Gloves	60	300	Vendor - Thorium Brotherhood	false
+Flarecore Mantle	61	300	Vendor - Thorium Brotherhood	false
+Flarecore Robe	62	300	Vendor - Thorium Brotherhood	false
+Flarecore Wraps	64	300	Vendor - Thorium Brotherhood	false
+Flarecore Leggings	65	300	Vendor - Thorium Brotherhood	false
+Glacial Gloves	80	300	Vendor - Argent Dawn	false
+Glacial Vest	80	300	Vendor - Argent Dawn	false
+Glacial Cloak	80	300	Vendor - Argent Dawn	false
+Glacial Wrists	80	300	Vendor - Argent Dawn	false
+Sylvan Shoulders	58	300	Vendor - Cenarion Circle	false
+Sylvan Crown	58	300	Vendor - Cenarion Circle	false
+Sylvan Vest	58	300	Vendor - Cenarion Circle	false
+Gaea's Embrace	62	300	Vendor - Cenarion Circle	false
+Mantle of the Timbermaw	64	300	Vendor - Timbermaw Hold	false
+Argent Boots	58	290	Vendor - Timbermaw Hold	false
+Argent Shoulders	62	300	Vendor - Timbermaw Hold	false
+Wisdom of the Timbermaw	58	290	Vendor - Timbermaw Hold	false
+Gloves of Spell Mastery	62	300	Drop	false
+Belt of Arcane Shadow	62	300	Drop	false
+Bloodvine Vest	65	300	Quest - Zandalar Tribe	false
+Bloodvine Leggings	65	300	Quest - Zandalar Tribe	false
+Bloodvine Boots	65	300	Quest - Zandalar Tribe	false
+Core Felcloth Bag	60	300	Quest - Zandalar Tribe	false`;
+
+        let checkedItems = new Set();
+
+        function getMethodClass(method) {
+            method = method.toLowerCase();
+            if (method.includes('trainer')) return 'trainer';
+            if (method.includes('drop') || method.includes('fish') || method.includes('pickpocket')) return 'drop';
+            if (method.includes('vendor')) return 'vendor';
+            if (method.includes('quest')) return 'quest';
+            return 'unknown';
+        }
+
+        function populateTable() {
+            const lines = tailoringData.split('\n').slice(1);
+            const tbody = document.getElementById('tableBody');
+            
+            lines.forEach((line, index) => {
+                if (line.trim()) {
+                    const [name, itemLevel, tailoringLevel, method, collected] = line.split('\t');
+                    const row = tbody.insertRow();
+                    
+                    row.innerHTML = `
+                        <td class="pattern-name">${name}</td>
+                        <td class="level">${itemLevel}</td>
+                        <td class="level">${tailoringLevel}</td>
+                        <td class="method ${getMethodClass(method)}">${method}</td>
+                        <td class="collected">
+                            <div class="checkbox-container">
+                                <div class="custom-checkbox" onclick="toggleCheckbox(this, ${index})" data-index="${index}"></div>
+                            </div>
+                        </td>
+                    `;
+                }
+            });
+            loadProgress();
+            updateProgress();
+        }
+
+        function toggleCheckbox(element, index) {
+            element.classList.toggle('checked');
+            if (element.classList.contains('checked')) {
+                checkedItems.add(index);
+            } else {
+                checkedItems.delete(index);
+            }
+            saveProgress();
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.custom-checkbox');
+            const checkedCount = document.querySelectorAll('.custom-checkbox.checked').length;
+            const totalCount = checkboxes.length;
+            const percentage = Math.round((checkedCount / totalCount) * 100);
+            
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            progressFill.style.width = percentage + '%';
+            progressText.textContent = `${checkedCount} / ${totalCount} patterns collected (${percentage}%)`;
+        }
+
+        function saveProgress() {
+            const progressData = Array.from(checkedItems);
+            localStorage.setItem('sagwaTailoringChecklist', JSON.stringify(progressData));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('sagwaTailoringChecklist');
+            if (saved) {
+                checkedItems = new Set(JSON.parse(saved));
+                checkedItems.forEach(index => {
+                    const checkbox = document.querySelector(`[data-index="${index}"]`);
+                    if (checkbox) {
+                        checkbox.classList.add('checked');
+                    }
+                });
+            }
+        }
+
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all progress? This cannot be undone!')) {
+                checkedItems.clear();
+                localStorage.removeItem('sagwaTailoringChecklist');
+                document.querySelectorAll('.custom-checkbox').forEach(checkbox => {
+                    checkbox.classList.remove('checked');
+                });
+                updateProgress();
+                
+                // Show feedback
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✨ Reset Complete! ✨';
+                btn.style.background = 'linear-gradient(135deg, #98fb98, #90ee90)';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = 'linear-gradient(135deg, #ff69b4, #ff91a4)';
+                }, 2000);
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', populateTable);
+    </script>
+</body>
+</html>
